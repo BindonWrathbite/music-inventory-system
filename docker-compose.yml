@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: music_inventory_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: musicadmin
+      POSTGRES_PASSWORD: supersecret123
+      POSTGRES_DB: music_inventory
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
