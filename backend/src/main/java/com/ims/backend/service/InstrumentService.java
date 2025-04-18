@@ -43,18 +43,7 @@ public class InstrumentService {
   }
 
   public InstrumentDTO saveInstrument(InstrumentDTO dto) {
-    Location location = null;
-    Student student = null;
-
-    if (dto.getLocationId() != null) {
-      location = locationRepository.findById(dto.getLocationId()).orElse(null);
-    }
-
-    if (dto.getAssignedStudentId() != null) {
-      student = studentRepository.findById(dto.getAssignedStudentId()).orElse(null);
-    }
-
-    Instrument instrument = InstrumentMapper.toEntity(dto, location, student);
+    Instrument instrument = InstrumentMapper.toEntity(dto, null, null);
     Instrument saved = instrumentRepository.save(instrument);
     return InstrumentMapper.toDTO(saved);
   }
