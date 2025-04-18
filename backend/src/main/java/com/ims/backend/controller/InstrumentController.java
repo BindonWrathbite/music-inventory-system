@@ -3,11 +3,14 @@ package com.ims.backend.controller;
 import com.ims.backend.dto.InstrumentDTO;
 import com.ims.backend.entity.Instrument;
 import com.ims.backend.service.InstrumentService;
+import com.ims.backend.repository.InstrumentRepository;
+import com.ims.backend.mapper.InstrumentMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/instruments")
@@ -43,30 +46,10 @@ public class InstrumentController {
           @PathVariable Long id,
           @RequestBody InstrumentDTO updatedDto
   ) {
-    Optional<Instrument> optionalInstrument = instrumentRepository.findById(id);
-    if (optionalInstrument.isEmpty()) {
-      return ResponseEntity.notFound().build();
-    }
-
-    Instrument existing = optionalInstrument.get();
-
-    // Update fields
-    existing.setType(updatedDto.getType());
-    existing.setBrand(updatedDto.getBrand());
-    existing.setSerialNumber(updatedDto.getSerialNumber());
-    existing.setInventoryNumber(updatedDto.getInventoryNumber());
-    existing.setRepairs(updatedDto.getRepairs());
-    existing.setCondition(updatedDto.getCondition());
-    existing.setPurchaseDate(updatedDto.getPurchaseDate());
-    existing.setPurchasePrice(updatedDto.getPurchasePrice());
-    existing.setNotes(updatedDto.getNotes());
-
-    // You can also update assigned student/location later if needed
-
-    Instrument saved = instrumentRepository.save(existing);
-    return ResponseEntity.ok(InstrumentMapper.toDTO(saved));
+    return instrumentService.updateInstrument(id, updatedDto)
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
   }
-
 
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteInstrument(@PathVariable("id") Long id) {

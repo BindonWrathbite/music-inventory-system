@@ -46,6 +46,26 @@ public class InstrumentService {
     return InstrumentMapper.toDTO(saved);
   }
 
+  public Optional<InstrumentDTO> updateInstrument(Long id, InstrumentDTO updatedDto) {
+    Optional<Instrument> optionalInstrument = instrumentRepository.findById(id);
+    if (optionalInstrument.isEmpty()) return Optional.empty();
+
+    Instrument existing = optionalInstrument.get();
+    existing.setType(updatedDto.getType());
+    existing.setBrand(updatedDto.getBrand());
+    existing.setSerialNumber(updatedDto.getSerialNumber());
+    existing.setInventoryNumber(updatedDto.getInventoryNumber());
+    existing.setRepairs(updatedDto.getRepairs());
+    existing.setCondition(updatedDto.getCondition());
+    existing.setPurchaseDate(updatedDto.getPurchaseDate());
+    existing.setPurchasePrice(updatedDto.getPurchasePrice());
+    existing.setNotes(updatedDto.getNotes());
+
+    Instrument saved = instrumentRepository.save(existing);
+    return Optional.of(InstrumentMapper.toDTO(saved));
+  }
+
+
   public void deleteInstrumentById(Long id) {
     instrumentRepository.deleteById(id);
   }

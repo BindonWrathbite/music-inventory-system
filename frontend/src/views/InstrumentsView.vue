@@ -13,13 +13,12 @@
         <h1 class="text-2xl font-bold">Instrument Inventory</h1>
         <button
             class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            @click="() => {
-            editingInstrument.value = null
-            showForm.value = true
-          }"
+            @click="handleAddInstrument"
         >
           Add Instrument
         </button>
+
+
       </div>
 
       <BaseDataTable
@@ -69,6 +68,11 @@ async function handleDelete(instrument: any) {
     console.error('Failed to delete instrument:', error)
     alert('An error occurred while trying to delete this instrument.')
   }
+}
+
+function handleAddInstrument() {
+  editingInstrument.value = null
+  showForm.value = true
 }
 
 function handleSubmitSuccess(newInstrument: InstrumentDTO) {
