@@ -19,7 +19,7 @@
       <RouterLink to="/students" class="bg-gray-800 hover:bg-gray-700 p-6 rounded shadow-lg transition duration-300">
         <h2 class="text-xl font-semibold mb-2">🎓 Students</h2>
         <p class="text-sm text-gray-300">Assign instruments and track student info.</p>
-      </RouterLink>
+      </RouterLink
       -->
     </div>
   </div>
