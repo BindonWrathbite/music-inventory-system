@@ -29,14 +29,31 @@
         </tr>
 
         <!-- Expanded detail row -->
-        <tr v-if="expandedIndex === index" class="bg-gray-900 border-b border-gray-700"><td :colspan="columnsToRender.length" class="p-4 text-sm text-gray-300 bg-gray-900">
-          <div class="grid grid-cols-2 gap-x-4 gap-y-2">
+        <tr v-if="expandedIndex === index" class="bg-gray-900 border-b border-gray-700">
+          <td :colspan="columnsToRender.length" class="p-4 text-sm text-gray-300 bg-gray-900">
+          <div class="grid grid-cols-2 gap-x-4 gap-y-2 mb-4">
             <template v-for="(value, key) in getExtraFields(item)" :key="key">
               <div class="font-semibold text-gray-400">{{ formatLabel(key) }}:</div>
               <div class="text-gray-100">{{ value ?? '—' }}</div>
             </template>
           </div>
+
+          <div class="flex justify-end gap-2">
+            <button
+                @click.stop="emit('edit', item)"
+                class="px-3 py-1 bg-yellow-500 text-black rounded hover:bg-yellow-600 text-sm"
+            >
+              Edit
+            </button>
+            <button
+                @click.stop="emit('delete', item)"
+                class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
+            >
+              Delete
+            </button>
+          </div>
         </td>
+
         </tr>
       </template>
       </tbody>
@@ -57,6 +74,7 @@ const props = defineProps<{
   columns?: Column[]
   keyField?: string
 }>()
+const emit = defineEmits(['edit', 'delete'])
 
 // Only render columns explicitly listed or inferred (excluding 'id')
 const columnsToRender = computed(() => {
@@ -80,10 +98,12 @@ function toggleExpanded(index: number) {
 // Pull in additional fields for expanded row view
 function getExtraFields(item: any) {
   const visibleKeys = columnsToRender.value.map(col => col.key)
+  const hiddenKeys = ['id', 'value'] // Add others here if needed
+
   const result: Record<string, any> = {}
 
   Object.entries(item).forEach(([key, value]) => {
-    if (!visibleKeys.includes(key) && key !== 'id') {
+    if (!visibleKeys.includes(key) && !hiddenKeys.includes(key)) {
       result[key] = value
     }
   })

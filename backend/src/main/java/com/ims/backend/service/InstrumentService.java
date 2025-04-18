@@ -2,8 +2,6 @@ package com.ims.backend.service;
 
 import com.ims.backend.dto.InstrumentDTO;
 import com.ims.backend.entity.Instrument;
-import com.ims.backend.entity.Location;
-import com.ims.backend.entity.Student;
 import com.ims.backend.mapper.InstrumentMapper;
 import com.ims.backend.repository.InstrumentRepository;
 import com.ims.backend.repository.LocationRepository;

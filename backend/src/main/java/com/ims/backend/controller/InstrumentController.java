@@ -38,6 +38,36 @@ public class InstrumentController {
     return ResponseEntity.ok(saved);
   }
 
+  @PutMapping("/{id}")
+  public ResponseEntity<InstrumentDTO> updateInstrument(
+          @PathVariable Long id,
+          @RequestBody InstrumentDTO updatedDto
+  ) {
+    Optional<Instrument> optionalInstrument = instrumentRepository.findById(id);
+    if (optionalInstrument.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+
+    Instrument existing = optionalInstrument.get();
+
+    // Update fields
+    existing.setType(updatedDto.getType());
+    existing.setBrand(updatedDto.getBrand());
+    existing.setSerialNumber(updatedDto.getSerialNumber());
+    existing.setInventoryNumber(updatedDto.getInventoryNumber());
+    existing.setRepairs(updatedDto.getRepairs());
+    existing.setCondition(updatedDto.getCondition());
+    existing.setPurchaseDate(updatedDto.getPurchaseDate());
+    existing.setPurchasePrice(updatedDto.getPurchasePrice());
+    existing.setNotes(updatedDto.getNotes());
+
+    // You can also update assigned student/location later if needed
+
+    Instrument saved = instrumentRepository.save(existing);
+    return ResponseEntity.ok(InstrumentMapper.toDTO(saved));
+  }
+
+
   @DeleteMapping("/{id}")
   public ResponseEntity<Void> deleteInstrument(@PathVariable("id") Long id) {
     instrumentService.deleteInstrumentById(id);
