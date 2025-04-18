@@ -32,7 +32,9 @@ public class SecurityConfiguration {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-    return http.authorizeHttpRequests(cfg -> cfg
+    return http
+            .authorizeHttpRequests(cfg -> cfg
+            .requestMatchers("/api/**").permitAll()
             .anyRequest().authenticated()
         )
         .csrf(AbstractHttpConfigurer::disable)
