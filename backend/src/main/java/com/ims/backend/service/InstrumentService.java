@@ -1,33 +1,62 @@
 package com.ims.backend.service;
 
+import com.ims.backend.dto.InstrumentDTO;
 import com.ims.backend.entity.Instrument;
+import com.ims.backend.entity.Location;
+import com.ims.backend.entity.Student;
+import com.ims.backend.mapper.InstrumentMapper;
 import com.ims.backend.repository.InstrumentRepository;
+import com.ims.backend.repository.LocationRepository;
+import com.ims.backend.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class InstrumentService {
 
   private final InstrumentRepository instrumentRepository;
+  private final LocationRepository locationRepository;
+  private final StudentRepository studentRepository;
 
   @Autowired
-  public InstrumentService(InstrumentRepository instrumentRepository) {
+  public InstrumentService(InstrumentRepository instrumentRepository,
+                           LocationRepository locationRepository,
+                           StudentRepository studentRepository) {
     this.instrumentRepository = instrumentRepository;
+    this.locationRepository = locationRepository;
+    this.studentRepository = studentRepository;
   }
 
-  public List<Instrument> getAllInstruments() {
-    return instrumentRepository.findAll();
+  public List<InstrumentDTO> getAllInstruments() {
+    return instrumentRepository.findAll().stream()
+            .map(InstrumentMapper::toDTO)
+            .collect(Collectors.toList());
   }
 
-  public Optional<Instrument> getInstrumentById(Long id) {
-    return instrumentRepository.findById(id);
+  public Optional<InstrumentDTO> getInstrumentById(Long id) {
+    return instrumentRepository.findById(id)
+            .map(InstrumentMapper::toDTO);
   }
 
-  public Instrument saveInstrument(Instrument instrument) {
-    return instrumentRepository.save(instrument);
+  public InstrumentDTO saveInstrument(InstrumentDTO dto) {
+    Location location = null;
+    Student student = null;
+
+    if (dto.getLocationId() != null) {
+      location = locationRepository.findById(dto.getLocationId()).orElse(null);
+    }
+
+    if (dto.getAssignedStudentId() != null) {
+      student = studentRepository.findById(dto.getAssignedStudentId()).orElse(null);
+    }
+
+    Instrument instrument = InstrumentMapper.toEntity(dto, location, student);
+    Instrument saved = instrumentRepository.save(instrument);
+    return InstrumentMapper.toDTO(saved);
   }
 
   public void deleteInstrumentById(Long id) {
