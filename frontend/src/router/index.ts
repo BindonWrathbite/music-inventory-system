@@ -22,7 +22,7 @@ import LoginView from '@/views/LoginView.vue'
 
         {
             path: '/login',
-            name: 'Login',
+            name: 'login',
             component: LoginView,
             meta: { requiresAuth: false }, // 🚪 Public route
         },

@@ -45,6 +45,6 @@ const router = useRouter()
 // Clear login state and redirect to /login
 const handleLogout = () => {
   auth.logout()
-  router.push({ name: 'Login' })
+  router.push({ name: 'login' })
 }
 </script>
