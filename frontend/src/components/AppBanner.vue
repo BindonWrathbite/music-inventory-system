@@ -12,15 +12,39 @@
       </h1>
     </div>
 
-    <!-- Music Notes -->
-    <div class="text-2xl md:text-3xl pr-2 hidden sm:flex gap-1">
+    <!-- Right section: Animated notes always show, login info only if logged in -->
+    <div class="hidden sm:flex items-center gap-3 pr-2 text-2xl md:text-3xl">
       <span class="inline-block animate-bounce">🎵</span>
       <span class="inline-block animate-bounce [animation-delay:0.2s]">🎶</span>
       <span class="inline-block animate-bounce [animation-delay:0.4s]">🎵</span>
+
+      <!-- Only show when user is logged in -->
+      <template v-if="auth.isLoggedIn">
+        <div class="text-sm md:text-base font-medium text-gray-700 ml-3">
+          Hello, {{ auth.username }}
+        </div>
+
+        <button
+            @click="handleLogout"
+            class="ml-2 px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition"
+        >
+          Logout
+        </button>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// No logic needed—pure visual component
+import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+
+const auth = useAuthStore()
+const router = useRouter()
+
+// Clear login state and redirect to /login
+const handleLogout = () => {
+  auth.logout()
+  router.push({ name: 'Login' })
+}
 </script>
