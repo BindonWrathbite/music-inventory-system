@@ -35,11 +35,11 @@ import LoginView from '@/views/LoginView.vue'
 
     // Navigation guard: blocks access to protected routes if not logged in
     router.beforeEach((to, from, next) => {
-        const auth = useAuthStore() // Get auth state from Pinia
+        const auth = useAuthStore()
         if (to.meta.requiresAuth && !auth.isLoggedIn) {
-            next({ name: 'Login' }) // Redirect to login
+            next({ name: 'login' })
         } else {
-            next() // Allow navigation
+            next()
         }
     })
 

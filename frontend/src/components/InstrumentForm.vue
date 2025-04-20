@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
+import axios from 'axios'
 import BaseEntityForm from './BaseEntityForm.vue'
 import type { InstrumentDTO } from '@/types/instrument'
 
@@ -18,7 +19,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['submitSuccess', 'cancel'])
 
-// Define the fields to render in the form
+// Define editable fields for the instrument form
 const fields = [
   { key: 'type', label: 'Type', type: 'text' },
   { key: 'brand', label: 'Brand', type: 'text' },
@@ -29,31 +30,26 @@ const fields = [
   { key: 'purchasePrice', label: 'Purchase Price', type: 'text' },
   { key: 'repairs', label: 'Repairs', type: 'textarea' },
   { key: 'notes', label: 'Notes', type: 'textarea' },
-  // These will be view-only for now
   { key: 'locationName', label: 'Assigned Location', type: 'text' },
   { key: 'assignedStudentName', label: 'Assigned Student', type: 'text' }
 ]
 
+// Submit handler for both add and edit
 async function submitForm(formData: InstrumentDTO) {
   try {
     const isEdit = !!formData.id
     const url = isEdit
-        ? `http://localhost:8080/api/v1/instruments/${formData.id}`
-        : 'http://localhost:8080/api/v1/instruments'
-    const method = isEdit ? 'put' : 'post'
+        ? `/api/v1/instruments/${formData.id}`
+        : '/api/v1/instruments'
 
-    const response = await fetch(url, {
-      method: method.toUpperCase(),
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
-    })
+    const response = isEdit
+        ? await axios.put(url, formData)
+        : await axios.post(url, formData)
 
-    if (!response.ok) throw new Error('Failed to submit instrument')
-    const result = await response.json()
-    emit('submitSuccess', result)
+    emit('submitSuccess', response.data)
   } catch (error) {
-    console.error(error)
-    alert('An error occurred. Please try again.')
+    console.error('Instrument save failed:', error)
+    alert('An error occurred while saving the instrument. Please try again.')
   }
 }
 </script>

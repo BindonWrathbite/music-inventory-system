@@ -5,53 +5,51 @@ export const useAuthStore = defineStore('auth', {
     state: () => ({
         username: localStorage.getItem('auth_username') || '',
         password: localStorage.getItem('auth_password') || '',
-        isLoggedIn: !!localStorage.getItem('auth_username'), // True if saved login
+        isLoggedIn: !!(localStorage.getItem('auth_username') && localStorage.getItem('auth_password'))
     }),
 
     actions: {
-        // Log in with username/password
         async login(username: string, password: string) {
-            // Construct Basic Auth header
             const basicAuth = 'Basic ' + btoa(`${username}:${password}`)
 
             try {
-                // Make a simple request to verify credentials (any protected route works)
                 await axios.get('/api/instruments', {
                     headers: {
-                        Authorization: basicAuth,
-                    },
+                        Authorization: basicAuth
+                    }
                 })
 
-                // If successful, store credentials and mark as logged in
                 this.username = username
                 this.password = password
                 this.isLoggedIn = true
 
-                // Set Axios default auth header globally
+                localStorage.setItem('auth_username', username)
+                localStorage.setItem('auth_password', password)
                 axios.defaults.headers.common['Authorization'] = basicAuth
 
                 return true
             } catch (error) {
-                // Login failed — likely 401
                 this.logout()
                 return false
             }
         },
 
-        // Log out and clear state
         logout() {
             this.username = ''
             this.password = ''
             this.isLoggedIn = false
+            localStorage.removeItem('auth_username')
+            localStorage.removeItem('auth_password')
             delete axios.defaults.headers.common['Authorization']
-        },
-    },
+        }
+    }
 })
 
-// 📌 Immediately re-apply stored auth header on app start
+// Restore credentials only if both username AND password exist
 const storedUsername = localStorage.getItem('auth_username')
 const storedPassword = localStorage.getItem('auth_password')
 
 if (storedUsername && storedPassword) {
-    axios.defaults.headers.common['Authorization'] = 'Basic ' + btoa(`${storedUsername}:${storedPassword}`)
+    const basicAuth = 'Basic ' + btoa(`${storedUsername}:${storedPassword}`)
+    axios.defaults.headers.common['Authorization'] = basicAuth
 }
