@@ -2,7 +2,7 @@
   <div class="w-full bg-white text-gray-900 flex items-center justify-between p-4 shadow-md">
     <!-- Logo -->
     <div class="flex items-center gap-2">
-      <img src="/images/dps-logo.jpg" alt="Dearborn Public Schools" class="h-12 w-auto" />
+      <img @click="router.push({ name: 'home' })" src="/images/dps-logo.jpg" alt="Dearborn Public Schools" class="h-12 w-auto" />
     </div>
 
     <!-- Title -->
@@ -23,13 +23,31 @@
         <div class="text-sm md:text-base font-medium text-gray-700 ml-3">
           Hello, {{ auth.username }}
         </div>
+        <div>
+        <!-- Home Button -->
+        <button
+            @click="router.push({ name: 'home' })"
+            class="ml-2 px-3 py-1 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition"
+        >
+          Home
+        </button>
 
+        <!-- Change Password Button (for all logged-in users) -->
+        <button
+            @click="router.push({ name: 'change-password' })"
+            class="ml-2 px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        >
+          Change Password
+        </button>
+
+        <!-- Logout Button -->
         <button
             @click="handleLogout"
             class="ml-2 px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition"
         >
           Logout
         </button>
+
       </template>
     </div>
   </div>

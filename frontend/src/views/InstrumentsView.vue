@@ -34,13 +34,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
-import BaseDataTable from "@/components/BaseDataTable.vue";
+import BaseDataTable from '@/components/BaseDataTable.vue'
 import InstrumentForm from '@/components/InstrumentForm.vue'
 
+// State
 const instruments = ref([])
 const showForm = ref(false)
-const editingInstrument = ref<InstrumentDTO | null>(null)
+const editingInstrument = ref(null)
 
+// Columns for data table
 const instrumentColumns = [
   { key: 'type', label: 'Type' },
   { key: 'brand', label: 'Brand' },
@@ -50,18 +52,23 @@ const instrumentColumns = [
   { key: 'assignedStudentName', label: 'Assigned To' }
 ]
 
-// handlers for edit and delete
-function handleEdit(instrument: InstrumentDTO) {
+// Event handlers
+function handleEdit(instrument) {
   editingInstrument.value = instrument
   showForm.value = true
 }
 
-async function handleDelete(instrument: any) {
+async function handleDelete(instrument) {
   const confirmDelete = confirm(`Are you sure you want to delete ${instrument.type} (${instrument.inventoryNumber})?`)
   if (!confirmDelete) return
 
   try {
-    await axios.delete(`http://localhost:8080/api/v1/instruments/${instrument.id}`)
+    await axios.delete(`/api/v1/instruments/${instrument.id}`, {
+      auth: {
+        username: localStorage.getItem('auth_username') || '',
+        password: localStorage.getItem('auth_password') || '',
+      }
+    })
     instruments.value = instruments.value.filter(i => i.id !== instrument.id)
     console.log('Instrument deleted.')
   } catch (error) {
@@ -75,7 +82,7 @@ function handleAddInstrument() {
   showForm.value = true
 }
 
-function handleSubmitSuccess(newInstrument: InstrumentDTO) {
+function handleSubmitSuccess(newInstrument) {
   const index = instruments.value.findIndex(i => i.id === newInstrument.id)
   if (index !== -1) {
     instruments.value[index] = newInstrument
@@ -91,12 +98,19 @@ function handleCancel() {
   showForm.value = false
 }
 
+// Fetch instrument data on mount with credentials
 onMounted(async () => {
   try {
-    const response = await axios.get('http://localhost:8080/api/v1/instruments')
+    const response = await axios.get('/api/v1/instruments', {
+      auth: {
+        username: localStorage.getItem('auth_username') || '',
+        password: localStorage.getItem('auth_password') || '',
+      }
+    })
     instruments.value = response.data
   } catch (error) {
     console.error('Failed to load instruments:', error)
+    alert('Unable to load instruments. Are you logged in?')
   }
 })
 </script>

@@ -4,6 +4,8 @@ import { useAuthStore } from '@/stores/auth' // Import the auth store
 import HomeView from '@/views/HomeView.vue'
 import InstrumentsView from '@/views/InstrumentsView.vue'
 import LoginView from '@/views/LoginView.vue'
+import UsersView from '@/views/UsersView.vue'
+import ChangePasswordView from '@/views/ChangePasswordView.vue'
 
     const routes = [
         {
@@ -25,6 +27,20 @@ import LoginView from '@/views/LoginView.vue'
             name: 'login',
             component: LoginView,
             meta: { requiresAuth: false }, // 🚪 Public route
+        },
+
+        {
+            path: '/users',
+            name: 'users',
+            component: UsersView,
+            meta: { requiresAuth: true } // 🔒 Protected route
+        },
+
+        {
+            path: '/change-password',
+            name: 'change-password',
+            component: ChangePasswordView,
+            meta: { requiresAuth: true },
         },
     ]
 

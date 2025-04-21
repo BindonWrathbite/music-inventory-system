@@ -14,5 +14,6 @@ declare module 'vue' {
     InstrumentForm: typeof import('./src/components/InstrumentForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    UserForm: typeof import('./src/components/UserForm.vue')['default']
   }
 }

@@ -3,53 +3,53 @@ import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
-        username: localStorage.getItem('auth_username') || '',
-        password: localStorage.getItem('auth_password') || '',
-        isLoggedIn: !!(localStorage.getItem('auth_username') && localStorage.getItem('auth_password'))
+        isLoggedIn: false,
+        username: '',
+        role: '',
+        credentials: {
+            username: '',
+            password: '',
+        },
     }),
 
     actions: {
-        async login(username: string, password: string) {
-            const basicAuth = 'Basic ' + btoa(`${username}:${password}`)
-
+        // Attempt login and fetch role from backend
+        async login(username: string, password: string): Promise<boolean> {
             try {
-                await axios.get('/api/instruments', {
-                    headers: {
-                        Authorization: basicAuth
-                    }
+                // Step 1: Ping a protected endpoint to validate credentials
+                await axios.get('/api/v1/instruments', {
+                    auth: { username, password },
                 })
 
-                this.username = username
-                this.password = password
-                this.isLoggedIn = true
+                // Step 2: Ask the backend for the logged-in user's info
+                const infoResponse = await axios.get('/api/auth/whoami', {
+                    auth: { username, password },
+                })
 
-                localStorage.setItem('auth_username', username)
-                localStorage.setItem('auth_password', password)
-                axios.defaults.headers.common['Authorization'] = basicAuth
+                // Step 3: Update state with user info
+                this.isLoggedIn = true
+                this.username = infoResponse.data.username
+                this.role = infoResponse.data.role
+                this.credentials = { username, password }
 
                 return true
             } catch (error) {
-                this.logout()
+                console.error('Login failed:', error)
+                this.isLoggedIn = false
+                this.username = ''
+                this.role = ''
+                this.credentials = { username: '', password: '' }
                 return false
             }
         },
 
+        // Clear login state
         logout() {
-            this.username = ''
-            this.password = ''
             this.isLoggedIn = false
-            localStorage.removeItem('auth_username')
-            localStorage.removeItem('auth_password')
-            delete axios.defaults.headers.common['Authorization']
-        }
-    }
+            this.username = ''
+            this.role = ''
+            this.credentials = { username: '', password: '' }
+            localStorage.clear()
+        },
+    },
 })
-
-// Restore credentials only if both username AND password exist
-const storedUsername = localStorage.getItem('auth_username')
-const storedPassword = localStorage.getItem('auth_password')
-
-if (storedUsername && storedPassword) {
-    const basicAuth = 'Basic ' + btoa(`${storedUsername}:${storedPassword}`)
-    axios.defaults.headers.common['Authorization'] = basicAuth
-}
