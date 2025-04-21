@@ -20,4 +20,8 @@ public class Student {
 
   @Column(name = "last_name")
   private String lastName;
+
+  @ManyToOne
+  @JoinColumn(name = "location_id")
+  private Location location;
 }
