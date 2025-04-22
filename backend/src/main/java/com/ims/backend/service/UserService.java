@@ -28,6 +28,28 @@ public class UserService {
     }
 
     public User saveUser(User user) {
+        if (user.getId() != null) {
+            // Editing an existing user — preserve their original password
+            Optional<User> existingOpt = userRepository.findById(user.getId());
+            if (existingOpt.isPresent()) {
+                User existing = existingOpt.get();
+
+                // If a new password was submitted (not blank), hash and use it
+                if (user.getPassword() != null && !user.getPassword().isBlank()
+                        && !user.getPassword().startsWith("$2a$")) {
+                    user.setPassword(passwordEncoder.encode(user.getPassword()));
+                } else {
+                    // Retain existing password
+                    user.setPassword(existing.getPassword());
+                }
+            }
+        } else {
+            // Creating a new user
+            if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+            }
+        }
+
         return userRepository.save(user);
     }
 

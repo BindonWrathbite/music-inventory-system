@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+  <div class="min-h-screen flex items-center justify-center p-4">
     <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-sm space-y-4">
       <h2 class="text-2xl font-bold text-center text-gray-800">Change Password</h2>
 
@@ -9,7 +9,7 @@
             id="oldPassword"
             v-model="oldPassword"
             type="password"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
         />
       </div>
 
@@ -19,7 +19,7 @@
             id="newPassword"
             v-model="newPassword"
             type="password"
-            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 text-black"
         />
       </div>
 
@@ -39,7 +39,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from 'primevue/usetoast'
 

@@ -9,7 +9,7 @@ public class UserDTO {
     private Long id;
     private String username;
     private String role;
-
+    private String password; // ✅ Used for registration
     private Long locationId;       // ✅ Used for dropdown selection
     private String locationName;   // ✅ Display only
 }

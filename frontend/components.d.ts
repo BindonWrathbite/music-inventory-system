@@ -11,6 +11,7 @@ declare module 'vue' {
     AppBanner: typeof import('./src/components/AppBanner.vue')['default']
     BaseDataTable: typeof import('./src/components/BaseDataTable.vue')['default']
     BaseEntityForm: typeof import('./src/components/BaseEntityForm.vue')['default']
+    Dropdown: typeof import('primevue/dropdown')['default']
     InstrumentForm: typeof import('./src/components/InstrumentForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

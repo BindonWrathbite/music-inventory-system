@@ -37,7 +37,7 @@
               <div class="text-gray-100">{{ value ?? '—' }}</div>
             </template>
           </div>
-
+            <!-- Edit Button -->
           <div class="flex justify-end gap-2">
             <button
                 @click.stop="emit('edit', item)"
@@ -45,7 +45,9 @@
             >
               Edit
             </button>
+            <!-- Delete Button (only if not the current user) -->
             <button
+                v-if="!props.currentUsername || item.username !== props.currentUsername"
                 @click.stop="emit('delete', item)"
                 class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-sm"
             >
@@ -73,10 +75,11 @@ const props = defineProps<{
   items: any[]
   columns?: Column[]
   keyField?: string
+  currentUsername?: string
 }>()
 const emit = defineEmits(['edit', 'delete'])
 
-// Only render columns explicitly listed or inferred (excluding 'id')
+// Render only explicitly defined columns or infer from first item (excluding 'id')
 const columnsToRender = computed(() => {
   if (props.columns?.length) return props.columns
   const sample = props.items[0] || {}
@@ -88,17 +91,17 @@ const columnsToRender = computed(() => {
       }))
 })
 
-// Track which row is expanded
+// Track currently expanded row index
 const expandedIndex = ref<number | null>(null)
 
 function toggleExpanded(index: number) {
   expandedIndex.value = expandedIndex.value === index ? null : index
 }
 
-// Pull in additional fields for expanded row view
+// Determine which fields to show in the expanded row
 function getExtraFields(item: any) {
   const visibleKeys = columnsToRender.value.map(col => col.key)
-  const hiddenKeys = ['id', 'value'] // Add others here if needed
+  const hiddenKeys = ['id', 'value', 'password', 'locationId'] // 👈 Exclude sensitive/internal fields
 
   const result: Record<string, any> = {}
 
@@ -111,10 +114,11 @@ function getExtraFields(item: any) {
   return result
 }
 
-// Format keys into readable labels
+// Format keys into display-friendly labels
 function formatLabel(key: string) {
   return key
-      .replace(/([A-Z])/g, ' $1') // Add space before capital letters
-      .replace(/^./, str => str.toUpperCase()) // Capitalize first letter
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
 }
 </script>
+

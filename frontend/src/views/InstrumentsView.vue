@@ -33,7 +33,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import axios from 'axios'
+import axios from '@/plugins/axios'
 import BaseDataTable from '@/components/BaseDataTable.vue'
 import InstrumentForm from '@/components/InstrumentForm.vue'
 

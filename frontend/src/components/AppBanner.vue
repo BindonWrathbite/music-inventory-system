@@ -47,7 +47,7 @@
         >
           Logout
         </button>
-
+        </div>
       </template>
     </div>
   </div>

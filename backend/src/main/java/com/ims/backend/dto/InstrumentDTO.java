@@ -21,6 +21,7 @@ public class InstrumentDTO {
     private BigDecimal purchasePrice;
     private String notes;
 
+    private Long locationId; // for dropdown selection
     private String locationName; // for display purposes
 
     private String assignedStudentName; // for display purposes

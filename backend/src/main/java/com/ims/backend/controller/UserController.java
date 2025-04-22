@@ -77,19 +77,16 @@ public class UserController {
     }
 
     // 🔐 Admin or Self: Change password
-    @PutMapping("/{id}/password")
+    @PutMapping("/{username}/change-password")
     public ResponseEntity<String> changePassword(
-            @PathVariable Long id,
+            @PathVariable String username,
             @RequestBody PasswordChangeRequest request,
             Authentication authentication) {
-
-        Optional<User> user = userService.getUserById(id);
+        Optional<User> user = userService.getUserByUsername(username);
         if (user.isEmpty()) return ResponseEntity.notFound().build();
 
-        String username = user.get().getUsername();
         String currentUsername = authentication.getName();
 
-        // ✅ Allow only if the user is admin or matches the user being modified
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
 
@@ -97,9 +94,10 @@ public class UserController {
             return ResponseEntity.status(403).body("Unauthorized to change this user's password.");
         }
 
-        boolean updated = userService.updatePassword(id, request.getNewPassword());
+        boolean updated = userService.updatePassword(user.get().getId(), request.getNewPassword());
         return updated
                 ? ResponseEntity.ok("Password updated successfully.")
                 : ResponseEntity.status(500).body("Failed to update password.");
     }
+
 }

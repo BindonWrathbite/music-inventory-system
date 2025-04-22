@@ -1,3 +1,24 @@
+<script setup lang="ts">
+import InputText from 'primevue/inputtext'
+import Calendar from 'primevue/calendar'
+import Textarea from 'primevue/textarea'
+import Button from 'primevue/button'
+import Dropdown from 'primevue/dropdown'
+
+// Accept `form` from parent and mutate it directly
+const props = defineProps<{
+  entity: Record<string, any>
+  fields: { key: string; label: string; type: string; readonly?: boolean; options?: any[] }[]
+  title?: string
+}>()
+
+const emit = defineEmits(['submit', 'cancel'])
+
+function submitForm() {
+  emit('submit', { ...props.entity }) // Use props.entity directly
+}
+</script>
+
 <template>
   <div class="bg-gray-800 text-white p-6 rounded shadow max-w-xl w-full">
     <h2 class="text-xl font-bold mb-4">
@@ -12,28 +33,36 @@
 
         <InputText
             v-if="field.type === 'text' || field.type === 'email' || field.type === 'number'"
-            v-model="form[field.key]"
+            v-model="entity[field.key]"
             :type="field.type"
-            :placeholder="field.label"
+            :placeholder="entity[field.key] || field.label"
+            :readonly="field.readonly || false"
             class="w-full"
         />
 
         <Textarea
             v-else-if="field.type === 'textarea'"
-            v-model="form[field.key]"
+            v-model="entity[field.key]"
             :placeholder="field.label"
             autoResize
         />
 
         <Calendar
             v-else-if="field.type === 'date'"
-            v-model="form[field.key]"
+            v-model="entity[field.key]"
             showIcon
             dateFormat="yy-mm-dd"
             :placeholder="field.label"
         />
 
-        <!-- Add more custom field types as needed -->
+        <Dropdown
+            v-else-if="field.type === 'dropdown'"
+            :options="field.options"
+            optionLabel="label"
+            optionValue="value"
+            v-model="entity[field.key]"
+            class="w-full"
+        />
       </template>
 
       <div class="flex justify-end gap-3 pt-2">
@@ -43,33 +72,3 @@
     </form>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, watch } from 'vue'
-import InputText from 'primevue/inputtext'
-import Calendar from 'primevue/calendar'
-import Textarea from 'primevue/textarea'
-import Button from 'primevue/button'
-
-const props = defineProps<{
-  entity?: Record<string, any> | null
-  fields: { key: string; label: string; type: string }[]
-  title?: string
-}>()
-
-const emit = defineEmits(['submit', 'cancel'])
-
-const form = ref<Record<string, any>>({})
-
-watch(
-    () => props.entity,
-    (newVal) => {
-      form.value = { ...newVal } || {}
-    },
-    { immediate: true }
-)
-
-function submitForm() {
-  emit('submit', { ...form.value })
-}
-</script>
