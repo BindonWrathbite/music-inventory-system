@@ -20,10 +20,17 @@ public class InstrumentMapper {
         dto.setPurchasePrice(instrument.getPurchasePrice());
         dto.setNotes(instrument.getNotes());
 
-        dto.setLocationName(instrument.getLocation() != null ? instrument.getLocation().getName() : null);
-        dto.setAssignedStudentName(instrument.getAssignedStudent() != null
-                ? instrument.getAssignedStudent().getFirstName() + " " + instrument.getAssignedStudent().getLastName()
-                : null);
+        if (instrument.getLocation() != null) {
+            dto.setLocationId(instrument.getLocation().getId());
+            dto.setLocationName(instrument.getLocation().getName());
+        }
+
+        if (instrument.getAssignedStudent() != null) {
+            dto.setAssignedStudentId(instrument.getAssignedStudent().getId());
+            dto.setAssignedStudentName(
+                    instrument.getAssignedStudent().getFirstName() + " " + instrument.getAssignedStudent().getLastName()
+            );
+        }
 
         return dto;
     }

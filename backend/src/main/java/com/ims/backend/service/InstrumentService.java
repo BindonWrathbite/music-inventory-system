@@ -41,29 +41,47 @@ public class InstrumentService {
   }
 
   public InstrumentDTO saveInstrument(InstrumentDTO dto) {
-    Instrument instrument = InstrumentMapper.toEntity(dto, null, null);
+    var location = dto.getLocationId() != null
+            ? locationRepository.findById(dto.getLocationId()).orElse(null)
+            : null;
+
+    var student = dto.getAssignedStudentId() != null
+            ? studentRepository.findById(dto.getAssignedStudentId()).orElse(null)
+            : null;
+
+    Instrument instrument = InstrumentMapper.toEntity(dto, location, student);
     Instrument saved = instrumentRepository.save(instrument);
     return InstrumentMapper.toDTO(saved);
   }
 
+
   public Optional<InstrumentDTO> updateInstrument(Long id, InstrumentDTO updatedDto) {
-    Optional<Instrument> optionalInstrument = instrumentRepository.findById(id);
-    if (optionalInstrument.isEmpty()) return Optional.empty();
+    return instrumentRepository.findById(id).map(existing -> {
+      existing.setType(updatedDto.getType());
+      existing.setBrand(updatedDto.getBrand());
+      existing.setSerialNumber(updatedDto.getSerialNumber());
+      existing.setInventoryNumber(updatedDto.getInventoryNumber());
+      existing.setRepairs(updatedDto.getRepairs());
+      existing.setCondition(updatedDto.getCondition());
+      existing.setPurchaseDate(updatedDto.getPurchaseDate());
+      existing.setPurchasePrice(updatedDto.getPurchasePrice());
+      existing.setNotes(updatedDto.getNotes());
 
-    Instrument existing = optionalInstrument.get();
-    existing.setType(updatedDto.getType());
-    existing.setBrand(updatedDto.getBrand());
-    existing.setSerialNumber(updatedDto.getSerialNumber());
-    existing.setInventoryNumber(updatedDto.getInventoryNumber());
-    existing.setRepairs(updatedDto.getRepairs());
-    existing.setCondition(updatedDto.getCondition());
-    existing.setPurchaseDate(updatedDto.getPurchaseDate());
-    existing.setPurchasePrice(updatedDto.getPurchasePrice());
-    existing.setNotes(updatedDto.getNotes());
+      var location = updatedDto.getLocationId() != null
+              ? locationRepository.findById(updatedDto.getLocationId()).orElse(null)
+              : null;
+      existing.setLocation(location);
 
-    Instrument saved = instrumentRepository.save(existing);
-    return Optional.of(InstrumentMapper.toDTO(saved));
+      var student = updatedDto.getAssignedStudentId() != null
+              ? studentRepository.findById(updatedDto.getAssignedStudentId()).orElse(null)
+              : null;
+      existing.setAssignedStudent(student);
+
+      Instrument saved = instrumentRepository.save(existing);
+      return InstrumentMapper.toDTO(saved);
+    });
   }
+
 
 
   public void deleteInstrumentById(Long id) {

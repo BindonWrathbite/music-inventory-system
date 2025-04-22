@@ -35,6 +35,8 @@ const form = ref({
   locationId: props.instrument?.locationId || null,
   assignedStudentId: props.instrument?.assignedStudentId || null
 })
+console.log('📦 Prefilled form:', form.value)
+
 
 // Dropdown options
 const locationOptions = ref<{ label: string, value: number }[]>([])
